@@ -8,6 +8,8 @@ node_modules/
 dist/
 web-build/
 
+# credenciales
+config/appentrenadorfit-firebase-adminsdk-7rn6y-91d330931c.json
 # Native
 *.orig.*
 *.jks
