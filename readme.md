@@ -65,6 +65,25 @@ La aplicación ofrece recomendaciones de nutrición basadas en los objetivos y l
 ![Objetivos](./assets/img_readme/objetivos.png)  
 Los usuarios pueden establecer sus objetivos de fitness, como pérdida de peso, aumento de masa muscular, o mejorar la resistencia. Aquí pueden ver su progreso en relación con dichos objetivos.
 
+## Nota : No olvidar agregar su configuracion de firebase en config
+
+```
+{
+  "type": "service_account",
+  "project_id": "appentrenadorfit",
+  "private_key_id": "",
+  "private_key": ""
+  "client_email": "",
+  "client_id": "",
+  "auth_uri": "",
+  "token_uri": "",
+  "auth_provider_x509_cert_url": "",
+  "client_x509_cert_url": "",
+  "universe_domain": ""
+}
+
+```
+
 
 
 
