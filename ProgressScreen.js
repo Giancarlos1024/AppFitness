@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, TextInput, TouchableOpacity, ImageBackground } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ProgressScreen = ({ route }) => {
   const [personalGoal, setPersonalGoal] = useState('');
   const [goals, setGoals] = useState([]);
 
-  // Obtener el correo electrónico del usuario desde los parámetros de navegación
   const { email } = route.params;
 
-  // Cargar objetivos almacenados al iniciar la aplicación
   useEffect(() => {
     const loadGoals = async () => {
       try {
@@ -22,9 +20,8 @@ const ProgressScreen = ({ route }) => {
       }
     };
     loadGoals();
-  }, [email]); // Añadir email a las dependencias para que se ejecute cuando cambie
+  }, [email]);
 
-  // Guardar objetivos en AsyncStorage cada vez que se actualicen
   useEffect(() => {
     const saveGoals = async () => {
       try {
@@ -34,7 +31,7 @@ const ProgressScreen = ({ route }) => {
       }
     };
     saveGoals();
-  }, [email, goals]); // Añadir email y goals a las dependencias
+  }, [email, goals]);
 
   const handleSetGoal = () => {
     if (personalGoal.trim() !== '') {
@@ -46,53 +43,60 @@ const ProgressScreen = ({ route }) => {
   const handleGoalStatusChange = (index, achieved) => {
     const updatedGoals = [...goals];
     updatedGoals[index].achieved = achieved;
-    setGoals(updatedGoals.filter((goal) => !goal.achieved)); // Eliminar objetivo si se marca como logrado
+    setGoals(updatedGoals.filter((goal) => !goal.achieved));
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Progreso</Text>
-      <Text style={styles.subtitle}>Establecer objetivo personal:</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Ingrese su objetivo"
-        value={personalGoal}
-        onChangeText={(text) => setPersonalGoal(text)}
-      />
-      <TouchableOpacity style={styles.button} onPress={handleSetGoal}>
-        <Text style={styles.buttonText}>Establecer Objetivo</Text>
-      </TouchableOpacity>
+    <ImageBackground source={require('./assets/Logo2.jpg')} style={styles.background}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <Text style={styles.title}>Progreso</Text>
+        <Text style={styles.subtitle}>Establecer objetivo personal:</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Ingrese su objetivo"
+          value={personalGoal}
+          onChangeText={(text) => setPersonalGoal(text)}
+        />
+        <TouchableOpacity style={styles.button} onPress={handleSetGoal}>
+          <Text style={styles.buttonText}>Establecer Objetivo</Text>
+        </TouchableOpacity>
 
-      {goals.map((goal, index) => (
-        <View key={index} style={styles.goalItem}>
-          <Image source={require('./assets/Progress_Objetivo.png')} style={styles.icon} />
-          <Text style={styles.goalText}>{goal.text}</Text>
-          <View style={styles.statusContainer}>
-            <TouchableOpacity
-              style={[styles.statusButton, goal.achieved ? styles.achievedButton : null]}
-              onPress={() => handleGoalStatusChange(index, true)}
-            >
-              <Text style={styles.statusButtonText}>✔</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.statusButton, !goal.achieved ? styles.notAchievedButton : null]}
-              onPress={() => handleGoalStatusChange(index, false)}
-            >
-              <Text style={styles.statusButtonText}>❌</Text>
-            </TouchableOpacity>
+        {goals.map((goal, index) => (
+          <View key={index} style={styles.goalItem}>
+            <Image source={require('./assets/Progress_Objetivo.png')} style={styles.icon} />
+            <Text style={styles.goalText}>{goal.text}</Text>
+            <View style={styles.statusContainer}>
+              <TouchableOpacity
+                style={[styles.statusButton, goal.achieved ? styles.achievedButton : null]}
+                onPress={() => handleGoalStatusChange(index, true)}
+              >
+                <Text style={styles.statusButtonText}>✔</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.statusButton, !goal.achieved ? styles.notAchievedButton : null]}
+                onPress={() => handleGoalStatusChange(index, false)}
+              >
+                <Text style={styles.statusButtonText}>❌</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      ))}
-    </ScrollView>
+        ))}
+      </ScrollView>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    resizeMode: 'cover',
+  },
   container: {
     flexGrow: 1,
-    backgroundColor: '#fff',
+    backgroundColor: 'rgba(255, 255, 255, 0.5)', // Fondo semitransparente para mantener la visibilidad del contenido
     alignItems: 'center',
     paddingVertical: 20,
+    
   },
   title: {
     fontSize: 24,
@@ -108,14 +112,16 @@ const styles = StyleSheet.create({
   input: {
     height: 40,
     width: '80%',
-    borderColor: '#ccc',
+    borderColor: 'black',
     borderWidth: 1,
     marginBottom: 10,
     paddingHorizontal: 10,
+    color:'black',
+    fontWeight:'bold'
   },
   button: {
-    backgroundColor: '#007AFF',
-    paddingVertical: 10,
+    backgroundColor: 'black',
+    paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 5,
     marginBottom: 20,
@@ -141,6 +147,7 @@ const styles = StyleSheet.create({
   goalText: {
     fontSize: 18,
     flex: 1,
+    fontWeight:'bold'
   },
   statusContainer: {
     flexDirection: 'row',
@@ -156,7 +163,7 @@ const styles = StyleSheet.create({
   statusButtonText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#007AFF',
+    color: 'green',
   },
   achievedButton: {
     backgroundColor: 'green',

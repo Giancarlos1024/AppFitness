@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
 
 const RegisterScreen = ({ navigation }) => {
   const [formData, setFormData] = useState({
@@ -7,15 +7,33 @@ const RegisterScreen = ({ navigation }) => {
     apellidos: '',
     fechaNacimiento: '',
     email: '',
-    contraseña: '',
-    confirmarContraseña: ''
+    contrasena: '',
+    confirmarContrasena: ''
   });
 
   const handleRegister = async () => {
     try {
-      console.log('Datos del formulario:', formData); // Agrega un console.log para ver los datos del formulario antes de enviar la solicitud
+      // Validación de campos obligatorios
+      if (!formData.nombres || !formData.apellidos || !formData.fechaNacimiento || !formData.email || !formData.contrasena || !formData.confirmarContrasena) {
+        console.error('Todos los campos son obligatorios');
+        return;
+      }
   
-      const response = await fetch('http://192.168.1.14:3000/register', {
+      // Validación de formato de correo electrónico
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        console.error('Correo electrónico inválido');
+        return;
+      }
+  
+      // Validación de coincidencia de contraseñas
+      if (formData.contrasena !== formData.confirmarContrasena) {
+        console.error('Las contraseñas no coinciden');
+        return;
+      }
+  
+      // Si todas las validaciones pasan, enviar la solicitud al servidor
+      const response = await fetch('http://192.168.1.109:3000/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -36,7 +54,6 @@ const RegisterScreen = ({ navigation }) => {
       // Maneja el error de red
     }
   };
-  
 
   const handleChangeText = (key, value) => {
     setFormData(prevState => ({
@@ -44,54 +61,66 @@ const RegisterScreen = ({ navigation }) => {
       [key]: value
     }));
   };
-
+  const handleStartPress = () => {
+    navigation.replace('Auth'); // Redirigir a la pantalla de inicio de sesión al hacer clic en "Empezar"
+  };
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Registro</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Nombres"
-        onChangeText={text => handleChangeText('nombres', text)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Apellidos"
-        onChangeText={text => handleChangeText('apellidos', text)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Fecha de Nacimiento"
-        onChangeText={text => handleChangeText('fechaNacimiento', text)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Correo electrónico"
-        keyboardType="email-address"
-        onChangeText={text => handleChangeText('email', text)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Contraseña"
-        secureTextEntry={true}
-        onChangeText={text => handleChangeText('contraseña', text)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Confirmar Contraseña"
-        secureTextEntry={true}
-        onChangeText={text => handleChangeText('confirmarContraseña', text)}
-      />
-      <TouchableOpacity style={styles.button} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Registrarse</Text>
-      </TouchableOpacity>
-    </View>
+    <ImageBackground source={require('./assets/Logo3.jpg')} style={styles.background}>
+      <View style={styles.container}>
+        <Text style={styles.title}>Registro</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Nombres Completos"
+          onChangeText={text => handleChangeText('nombres', text)}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Apellidos Completos"
+          onChangeText={text => handleChangeText('apellidos', text)}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Fecha de Nacimiento DD-MM-AAAA"
+          onChangeText={text => handleChangeText('fechaNacimiento', text)}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Correo Electrónico"
+          keyboardType="email-address"
+          onChangeText={text => handleChangeText('email', text)}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Contraseña"
+          secureTextEntry={true}
+          onChangeText={text => handleChangeText('contrasena', text)}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Confirmar Contraseña"
+          secureTextEntry={true}
+          onChangeText={text => handleChangeText('confirmarContrasena', text)}
+        />
+        <TouchableOpacity style={styles.button} onPress={handleRegister}>
+          <Text style={styles.buttonText}>Registrarse</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={handleStartPress}>
+          <Text style={styles.buttonText} >Iniciar cerrarSesion</Text>
+        </TouchableOpacity>
+      </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    resizeMode: 'cover',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -99,6 +128,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 20,
+    color: '#fff',
   },
   input: {
     width: '80%',
@@ -108,6 +138,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 10,
     paddingHorizontal: 10,
+    backgroundColor: '#fff',
   },
   button: {
     backgroundColor: 'black',

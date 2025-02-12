@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ImageBackground } from 'react-native';
 
 const AuthScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -13,9 +13,21 @@ const AuthScreen = ({ navigation }) => {
       console.error('El correo electrónico y la contraseña son obligatorios');
       return;
     }
-  
+    const isValidEmail = (email) => {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    };
+    
+    if (!email || !isValidEmail(email)) {
+      console.error('Ingrese un correo electrónico válido');
+      return;
+    }
+    if (!password || password.length < 6) {
+      console.error('La contraseña debe tener al menos 6 caracteres');
+      return;
+    }
+    
     try {
-      const response = await fetch('http://192.168.1.14:3000/login', {
+      const response = await fetch('http://192.168.1.109:3000/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -37,8 +49,7 @@ const AuthScreen = ({ navigation }) => {
       console.error('Error al iniciar sesión:', error);
     }
   };
-  
-  
+
   const handleRegister = () => {
     navigation.replace('Register'); // Redirigir a la pantalla de registro
   };
@@ -48,52 +59,67 @@ const AuthScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Image source={require('./assets/user.png')} style={styles.userImage} />
-      <TextInput
-        style={styles.input}
-        placeholder="Correo electrónico"
-        keyboardType="email-address"
-        autoCapitalize="none"
-        value={email}
-        onChangeText={setEmail}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Contraseña"
-        secureTextEntry={true}
-        autoCapitalize="none"
-        value={password}
-        onChangeText={setPassword}
-      />
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Iniciar Sesión</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Registrarse</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={handleWelcome}>
-        <Text style={styles.buttonText}>Welcome</Text>
-      </TouchableOpacity>
-    </View>
+    <ImageBackground source={require('./assets/Logo3.jpg')} style={styles.background}>
+      <View style={styles.container}>
+        <Text style={styles.title}>Login</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Correo electrónico"
+          keyboardType="email-address"
+          autoCapitalize="none"
+          value={email}
+          onChangeText={setEmail}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Contraseña"
+          secureTextEntry={true}
+          autoCapitalize="none"
+          value={password}
+          onChangeText={setPassword}
+        />
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Iniciar Sesión</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={handleRegister}>
+          <Text style={styles.buttonText}>Registrarse</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={handleWelcome}>
+          <Text style={styles.buttonText}>Welcome</Text>
+        </TouchableOpacity>
+      </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  background: {
     flex: 1,
-    backgroundColor: '#fff',
+    resizeMode: 'cover',
     justifyContent: 'center',
     alignItems: 'center',
   },
+  container: {
+    flex: 1,
+    justifyContent: 'center', // Centrar verticalmente los elementos en el contenedor
+    alignItems: 'center', // Centrar horizontalmente los elementos en el contenedor
+    marginTop:310
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: 'black', // Color blanco para que sea visible sobre el fondo
+  },
   input: {
-    width: '80%',
+    width: '90%', // Ampliar el ancho del input al 90% del contenedor
     height: 40,
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
     marginBottom: 10,
     paddingHorizontal: 10,
+    backgroundColor: '#fff',// Color de fondo blanco para distinguir los inputs
   },
   button: {
     backgroundColor: 'black',
@@ -107,11 +133,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  userImage: {
-    width: 100,
-    height: 100,
-    marginBottom: 20,
-  },
 });
-
 export default AuthScreen;

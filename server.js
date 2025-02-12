@@ -15,18 +15,23 @@ firebaseAdmin.initializeApp({
 // Endpoint para manejar el registro de usuario
 app.post('/register', async (req, res) => {
   try {
-    const { nombres, apellidos, fechaNacimiento, email, contraseña,confirmarContraseña } = req.body;
+    const { nombres, apellidos, fechaNacimiento, email, contrasena, confirmarContrasena } = req.body;
+
     
     console.log('Datos recibidos para registro:', req.body); // Agrega un console.log para verificar los datos recibidos
-
+    
+    if (!email  || !nombres || !apellidos || !fechaNacimiento || !contrasena || !confirmarContrasena) {
+      res.status(400).json({ error: 'Todos los campos son obligatorios' });
+      return;
+    }
     // Guarda los datos en Firebase Firestore
     const userRef = await firebaseAdmin.firestore().collection('Usuarios').add({
       nombres,
       apellidos,
       fecha_nacimiento: fechaNacimiento, // Asegúrate de que los nombres de los campos coincidan con los de tu base de datos Firestore
       correo: email,
-      contrasena: contraseña,
-      confirmar_contrasena:confirmarContraseña
+      contrasena,
+      confirmar_contrasena:confirmarContrasena
     });
 
     console.log('Usuario registrado con ID:', userRef.id);

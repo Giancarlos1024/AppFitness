@@ -1,20 +1,29 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ImageBackground, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // Importa los iconos de Ionicons
-
-import { ExerciseImages, NutritionImages } from './data';
 const HomeScreen = ({ navigation, route }) => {
   const [menuVisible, setMenuVisible] = useState(false);
+  const [backgroundIndex, setBackgroundIndex] = useState(0); // Estado para controlar el índice de la imagen de fondo
+
+  const backgrounds = [require('./assets/Fondo.jpg'), require('./assets/Fondo2.jpg'), require('./assets/Fondo3.jpg'),require('./assets/Fondo4.jpg')]; // Lista de imágenes de fondo
+
+  useEffect(() => {
+    // Función para cambiar la imagen de fondo cada 5 segundos
+    const interval = setInterval(() => {
+      setBackgroundIndex((prevIndex) => (prevIndex + 1) % backgrounds.length);
+    }, 5000);
+
+    return () => clearInterval(interval); // Limpia el intervalo cuando el componente se desmonta
+  }, []);
 
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
   };
 
   const goToProfile = () => {
-    const { email } = route.params; // Obtener el correo electrónico de los parámetros de la ruta
-    navigation.navigate('Profile', { email }); // Pasar el correo electrónico como parámetro
+    const { email } = route.params;
+    navigation.navigate('Profile', { email });
   };
-  
 
   const cerrarSesion = () => {
     navigation.navigate('Auth');
@@ -22,7 +31,7 @@ const HomeScreen = ({ navigation, route }) => {
 
   const goToProgress = () => {
     const { email } = route.params;
-    navigation.navigate('Progress', { email }); // Pasar el correo electrónico como parámetro
+    navigation.navigate('Progress', { email });
   };
 
   const goToDailyTraining = () => {
@@ -37,118 +46,108 @@ const HomeScreen = ({ navigation, route }) => {
     navigation.navigate('NutritionRecommendations');
   };
 
-
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Bienvenido a MundoFit</Text>
-      <Text style={styles.subtitle}>¡Tu compañero de fitness!</Text>
-      <TouchableOpacity style={styles.menuButton} onPress={toggleMenu}>
-        <Ionicons name="menu" size={24} color="black" />
-      </TouchableOpacity>
-      {menuVisible && (
-        <View style={styles.menuContainer}>
-          <TouchableOpacity style={styles.menuItem} onPress={goToProfile}>
-            <Ionicons name="person" size={24} color="black" />
-            <Text style={styles.menuItemText}>Perfil</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.menuItem} onPress={goToProgress}>
-            <Ionicons name="trending-up" size={24} color="black" />
-            <Text style={styles.menuItemText}>Progreso</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.menuItem} onPress={goToDailyTraining}>
-            <Ionicons name="calendar" size={24} color="black" />
-            <Text style={styles.menuItemText}>Entrenamiento del Día</Text>
-          </TouchableOpacity>
-          {/* Nuevas secciones */}
-          <TouchableOpacity style={styles.menuItem} onPress={goToExerciseSuggestions}>
-            <Ionicons name="fitness" size={24} color="black" />
-            <Text style={styles.menuItemText}>Sugerencias de Ejercicios</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.menuItem} onPress={goToNutritionRecommendations}>
-            <Ionicons name="nutrition" size={24} color="black" />
-            <Text style={styles.menuItemText}>Recomendaciones de Nutrición</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.menuItem} onPress={cerrarSesion}>
-            <Ionicons name="log-out" size={24} color="black" />
-            <Text style={styles.menuItemText}>Cerrar Sesión</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-      <TouchableOpacity style={styles.imagelog}>
-        <Text style={styles.additionalContent}>
-          ¡Empieza tu día con energía y motivación!
-        </Text>
-        <Image source={require('./assets/logofit.jpg')} style={styles.imageEM} />
-      </TouchableOpacity>
-
-      <View style={styles.imageContainer}>
-        <Text style={styles.imageText}>Sugerencias de Ejercicios</Text>
-        <View style={styles.row}>
-          {ExerciseImages.map((image, index) => (
-            <TouchableOpacity key={index} style={styles.imageButton}>
-              <Image source={image.uri} style={styles.image} />
-              <Text style={styles.imageButtonText}>{image.name}</Text>
+    <ImageBackground
+      source={backgrounds[backgroundIndex]}
+      style={styles.container}
+    >
+      <View style={styles.overlay}>
+        <Text style={styles.title}>Bienvenido a GianFitPro</Text>
+        <Text style={styles.subtitle}>¡Tu compañero de fitness!</Text>
+        <TouchableOpacity style={styles.menuButton} onPress={toggleMenu}>
+          <Ionicons name="menu" size={24} color="#fff" />
+        </TouchableOpacity>
+        {menuVisible && (
+          <View style={styles.menuContainer}>
+            <TouchableOpacity style={styles.menuItem} onPress={goToProfile}>
+              <Ionicons name="person" size={24} color="black" />
+              <Text style={styles.menuItemText}>Perfil</Text>
             </TouchableOpacity>
-          ))}
-        </View>
-      </View>
-      <View style={styles.imageContainer}>
-        <Text style={styles.imageText}>Recomendaciones de Nutrición</Text>
-        <View style={styles.row}>
-          {NutritionImages.map((image, index) => (
-            <TouchableOpacity key={index} style={styles.imageButton}>
-              <Image source={image.uri} style={styles.image} />
-              <Text style={styles.imageButtonText}>{image.name}</Text>
+            <TouchableOpacity style={styles.menuItem} onPress={goToProgress}>
+              <Ionicons name="trending-up" size={24} color="black" />
+              <Text style={styles.menuItemText}>Progreso</Text>
             </TouchableOpacity>
-          ))}
-        </View>
+            <TouchableOpacity style={styles.menuItem} onPress={goToDailyTraining}>
+              <Ionicons name="calendar" size={24} color="black" />
+              <Text style={styles.menuItemText}>Entrenamiento del Día</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.menuItem} onPress={goToExerciseSuggestions}>
+              <Ionicons name="fitness" size={24} color="black" />
+              <Text style={styles.menuItemText}>Sugerencias de Ejercicios</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.menuItem} onPress={goToNutritionRecommendations}>
+              <Ionicons name="nutrition" size={24} color="black" />
+              <Text style={styles.menuItemText}>Recomendaciones de Nutrición</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.menuItem} onPress={cerrarSesion}>
+              <Ionicons name="log-out" size={24} color="black" />
+              <Text style={styles.menuItemText}>Cerrar Sesión</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+        <TouchableOpacity style={styles.imagelog}>
+          <Text style={styles.additionalContent}>
+            ¡Empieza tu día con energía y motivación!
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.imageContainer} onPress={goToExerciseSuggestions}>
+          <Text style={styles.imageText}>Sugerencias de Ejercicios</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.imageContainer} onPress={goToNutritionRecommendations}>
+          <Text style={styles.imageText}>Recomendaciones de Nutrición</Text>
+        </TouchableOpacity>
       </View>
-      <Text style={styles.additionalContent}>
-        Descubre nuevos desafíos y supera tus límites.
-      </Text>
-    </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'relative', // Establece la posición relativa
+    resizeMode: 'cover',
+  },
+  overlay: {
+    flex: 1,
+    width: '100%',
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   title: {
-    color: 'red',
-    fontSize: 25,
+    color: '#fff',
+    fontSize: 30,
     fontWeight: 'bold',
     marginLeft: 10,
   },
   subtitle: {
-    color: 'gray',
+    color: '#fff',
     fontSize: 18,
-
+    fontWeight:'bold'
   },
   additionalContent: {
     fontSize: 16,
     marginBottom: 10,
     textAlign: 'center',
+    color:'#fff',
+    fontWeight:'bold'
   },
   menuButton: {
     position: 'absolute',
     top: 10,
-    left: 10, // Ajusta la posición a la izquierda
-    zIndex: 1, // Asegura que el botón del menú esté por encima del contenido
+    left: 10,
+    zIndex: 1,
   },
   menuContainer: {
     position: 'absolute',
     top: 50,
-    left: 10, // Ajusta la posición a la izquierda
+    left: 10,
     backgroundColor: 'white',
     padding: 10,
     borderRadius: 5,
     elevation: 5,
-    zIndex: 2, // Asegura que el menú esté por encima del contenido
+    zIndex: 2,
   },
   menuItem: {
     flexDirection: 'row',
@@ -161,22 +160,11 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     flexDirection: 'column',
-    marginBottom: 20,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 25,
     marginBottom: 10,
-  },
-  imageButton: {
-    alignItems: 'center',
-  },
-  image: {
-    width: 130,
-    height: 100,
-    resizeMode: 'cover',
-    marginBottom: 10,
-    margin:10,
   },
   imageText: {
     textAlign: 'center',
@@ -185,13 +173,6 @@ const styles = StyleSheet.create({
     textShadowColor: 'black',
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 10,
-    
-  },
-  imageButtonText: {
-    textAlign: 'center',
-    marginTop: 5,
-    color: 'black', // Puedes ajustar el color del texto según tus preferencias
-    fontStyle:'italic'
   },
   imagelog: {
     margin:40,
@@ -201,7 +182,7 @@ const styles = StyleSheet.create({
   imageEM: {
     width: 150,
     height: 150,
-    borderRadius: 75, // Esto hará que la imagen tenga forma de círculo
+    borderRadius: 75,
   },
 });
 
